@@ -28,3 +28,11 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
+
+jar {
+    archiveBaseName = 'producers'
+    version = '1.0'
+    manifest {
+        attributes 'Main-Class': 'producers.ProducerDriver'
+    }
+}
