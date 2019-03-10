@@ -4,7 +4,7 @@ import producers.basic.SimpleProducer;
 
 import java.util.stream.Stream;
 
-public class ProducerDriver {
+public class SimpleProducerDriver {
 
     public static void main(String[] args) {
         String errMsg = "Expected Usage: ProducerDiver ['async or sync', 'topic', 'msg1', 'msg2', ...]";
