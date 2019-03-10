@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_package = "com.basic";
+option java_outer_classname = "Listing";
+option java_multiple_files = true;
+
+message ListingKey {
+    enum RoomType {
+        PRIVATE_ROOM = 0;
+        ENTIRE_HOME_APT = 1;
+        SHARED_ROOM = 2;
+    }
+
+    string city = 1;
+    string country_code = 2;
+    RoomType room_type = 3;
+}
+
+message ListingValue {
+    message Price {
+        int32 euros = 1;
+        int32 cents = 2;
+    }
+
+    int32 listing_id = 1;
+    int32 host_id = 2;
+    string listing_name = 3;
+    string street = 4;
+    string neighbourhood = 5;
+    string property_type = 6;
+    int32 accommodates = 7;
+    int32 guests_included = 8;
+    Price price = 9;
+    Price cleaning_fee = 10;
+    Price extra_person = 11;
+    int32 number_reviews = 12;
+    float rating = 13;
+    float reviews_per_month = 14;
+}
