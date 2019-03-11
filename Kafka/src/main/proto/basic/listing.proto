@@ -17,11 +17,6 @@ message ListingKey {
 }
 
 message ListingValue {
-    message Price {
-        int32 euros = 1;
-        int32 cents = 2;
-    }
-
     int32 listing_id = 1;
     int32 host_id = 2;
     string listing_name = 3;
@@ -30,9 +25,9 @@ message ListingValue {
     string property_type = 6;
     int32 accommodates = 7;
     int32 guests_included = 8;
-    Price price = 9;
-    Price cleaning_fee = 10;
-    Price extra_person = 11;
+    float price = 9;
+    float cleaning_fee = 10;
+    float extra_person = 11;
     int32 number_reviews = 12;
     float rating = 13;
     float reviews_per_month = 14;

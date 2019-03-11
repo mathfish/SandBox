@@ -3,7 +3,6 @@ package producers;
 import com.basic.ListingKey;
 import com.basic.ListingKey.RoomType;
 import com.basic.ListingValue;
-import com.basic.ListingValue.Price;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -15,14 +14,16 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import java.util.Map;
 
 public class ListProducerDriver {
     private final static String data_loc = "data/listing.csv";
     private final static Map<String, RoomType> stringToRoomType = Map.of("Private room", RoomType.PRIVATE_ROOM);
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException, ParseException {
         ListingProducer listingProducer = new ListingProducer("Airbnb_Listings");
 
         Path csvPath = Paths.get(ListProducerDriver.class.getResource(data_loc).toURI());
@@ -61,21 +62,25 @@ public class ListProducerDriver {
             int numberReviews = Integer.parseInt(record.get("number_of_reviews"));
             float reviewRating = Float.parseFloat(record.get("review_scores_rating"));
             int reviewsPerMonth = Integer.parseInt(record.get("reviews_per_month"));
+            NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(Locale.US);
 
             ListingKey listingKey = buildKey(city, countryCode, roomType);
-            ListingValue.Builder valueBuilder = getValueBuilder(price, cleaningFee, extraPeople);
-            valueBuilder.setListingId(listing_id)
-                        .setListingName(listing_name)
-                        .setHostId(host_id)
-                        .setStreet(street)
-                        .setNeighbourhood(neighbourhood)
-                        .setPropertyType(propertyType)
-                        .setAccommodates(accommodates)
-                        .setGuestsIncluded(guestsIncluded)
-                        .setNumberReviews(numberReviews)
-                        .setRating(reviewRating)
-                        .setReviewsPerMonth(reviewsPerMonth);
-            ListingValue listingValue = valueBuilder.build();
+            ListingValue listingValue = ListingValue.newBuilder()
+                                                    .setListingId(listing_id)
+                                                    .setListingName(listing_name)
+                                                    .setHostId(host_id)
+                                                    .setStreet(street)
+                                                    .setNeighbourhood(neighbourhood)
+                                                    .setPropertyType(propertyType)
+                                                    .setAccommodates(accommodates)
+                                                    .setGuestsIncluded(guestsIncluded)
+                                                    .setNumberReviews(numberReviews)
+                                                    .setRating(reviewRating)
+                                                    .setReviewsPerMonth(reviewsPerMonth)
+                                                    .setPrice(currencyInstance.parse(price).floatValue())
+                                                    .setCleaningFee(currencyInstance.parse(cleaningFee).floatValue())
+                                                    .setExtraPerson(currencyInstance.parse(extraPeople).floatValue())
+                                                    .build();
 
             listingProducer.produce(listingKey, listingValue);
 
@@ -91,25 +96,5 @@ public class ListProducerDriver {
                          .setCountryCode(countryCode)
                          .setRoomType(stringToRoomType.get(roomType))
                          .build();
-    }
-
-    private static ListingValue.Builder getValueBuilder(String price, String cleaningFee, String extraPeople) {
-        return ListingValue.newBuilder()
-                           .setPrice(buildPrice(price))
-                           .setCleaningFee(buildPrice(cleaningFee))
-                           .setExtraPerson(buildPrice(extraPeople));
-    }
-
-    private static Price buildPrice(String price) {
-        String delimeters = "\\$|\\.";
-        String[] splits = price.split(delimeters);
-        if (splits.length != 2) {
-            throw new IllegalStateException("Incorrect parsing of price: " + price + " into " + Arrays.toString(splits));
-        }
-
-        return Price.newBuilder()
-                    .setEuros(Integer.valueOf(splits[0]))
-                    .setCents(Integer.valueOf(splits[1]))
-                    .build();
     }
 }

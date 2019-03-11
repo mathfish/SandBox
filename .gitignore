@@ -17,3 +17,4 @@ wp-content/wp-cache-config.php
 **/*gradlew*
 **/.gradle
 **/build
+**/Kafka/out
