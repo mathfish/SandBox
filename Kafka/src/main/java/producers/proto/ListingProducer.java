@@ -19,11 +19,11 @@ public class ListingProducer {
 
     public ListingProducer(String topic) {
         this.topic = topic;
-        kafkaProps.put("bootstrap.serviers", "localhost:9092");
+        kafkaProps.put("bootstrap.servers", "localhost:9092");
         kafkaProps.put("key.serializer", "producers.serializers.ListingKeySerializer");
         kafkaProps.put("value.serializer","producers.serializers.ListingValueSerializer");
         kafkaProps.put("retries", 3);
-        kafkaProps.put("acks", 1);
+        kafkaProps.put("acks", "1");
         kafkaProps.put("linger.ms", 5);
         kafkaProps.put("client.id", "listProd");
         producer = new KafkaProducer<>(kafkaProps);

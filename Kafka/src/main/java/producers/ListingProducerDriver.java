@@ -3,6 +3,7 @@ package producers;
 import com.basic.ListingKey;
 import com.basic.ListingKey.RoomType;
 import com.basic.ListingValue;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -10,24 +11,25 @@ import producers.proto.ListingProducer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
-public class ListProducerDriver {
-    private final static String data_loc = "data/listing.csv";
-    private final static Map<String, RoomType> stringToRoomType = Map.of("Private room", RoomType.PRIVATE_ROOM);
+@Slf4j
+public class ListingProducerDriver {
+    private final static String data_loc = "data/listings.csv";
+    private final static Map<String, RoomType> stringToRoomType = Map.of("Private room", RoomType.PRIVATE_ROOM,
+                                                                         "Entire home/apt", RoomType.ENTIRE_HOME_APT,
+                                                                         "Shared room", RoomType.SHARED_ROOM);
 
-    public static void main(String[] args) throws IOException, URISyntaxException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException {
         ListingProducer listingProducer = new ListingProducer("Airbnb_Listings");
-
-        Path csvPath = Paths.get(ListProducerDriver.class.getResource(data_loc).toURI());
-        BufferedReader reader = Files.newBufferedReader(csvPath);
+        InputStream inputStream = Objects.requireNonNull(ListingProducerDriver.class.getClassLoader().getResourceAsStream(data_loc));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         CSVParser csvRecords = new CSVParser(reader, CSVFormat.DEFAULT
                                                               .withFirstRecordAsHeader()
                                                               .withIgnoreHeaderCase()
@@ -61,9 +63,15 @@ public class ListProducerDriver {
             int guestsIncluded = Integer.parseInt(record.get("guests_included"));
             int numberReviews = Integer.parseInt(record.get("number_of_reviews"));
             float reviewRating = Float.parseFloat(record.get("review_scores_rating"));
-            int reviewsPerMonth = Integer.parseInt(record.get("reviews_per_month"));
+            float reviewsPerMonth = Float.parseFloat(record.get("reviews_per_month"));
             NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(Locale.US);
 
+            float cleaningFeeVal = 0f;
+            try {
+                cleaningFeeVal = currencyInstance.parse(cleaningFee).floatValue();
+            } catch (ParseException exception) {
+                log.info("Cannot parse " + cleaningFee + " to float", exception);
+            }
             ListingKey listingKey = buildKey(city, countryCode, roomType);
             ListingValue listingValue = ListingValue.newBuilder()
                                                     .setListingId(listing_id)
@@ -78,7 +86,7 @@ public class ListProducerDriver {
                                                     .setRating(reviewRating)
                                                     .setReviewsPerMonth(reviewsPerMonth)
                                                     .setPrice(currencyInstance.parse(price).floatValue())
-                                                    .setCleaningFee(currencyInstance.parse(cleaningFee).floatValue())
+                                                    .setCleaningFee(cleaningFeeVal)
                                                     .setExtraPerson(currencyInstance.parse(extraPeople).floatValue())
                                                     .build();
 
@@ -94,7 +102,7 @@ public class ListProducerDriver {
         return ListingKey.newBuilder()
                          .setCity(city)
                          .setCountryCode(countryCode)
-                         .setRoomType(stringToRoomType.get(roomType))
+                         .setRoomType(stringToRoomType.getOrDefault(roomType, RoomType.UNRECOGNIZED))
                          .build();
     }
 }
