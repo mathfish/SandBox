@@ -3,27 +3,26 @@ package consumers.proto;
 import com.basic.ListingKey;
 import com.basic.ListingValue;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 
 @Slf4j
 public final class ListingConsumer implements Runnable{
 
     private final Consumer<ListingKey, ListingValue> consumer;
+    private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
+    private int count = 0;
 
     public ListingConsumer(Integer clientId) {
         Properties consumerProperties = getConsumerProperties(clientId);
         consumer = new KafkaConsumer<>(consumerProperties);
         consumer.subscribe(Collections.singleton("Airbnb_Listings"));
+        currentOffsets = new HashMap<>();
     }
 
     private Properties getConsumerProperties(Integer id) {
@@ -44,13 +43,17 @@ public final class ListingConsumer implements Runnable{
                 ConsumerRecords<ListingKey, ListingValue> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<ListingKey, ListingValue> record : records) {
                     log.info(buildMessage(record));
-                }
-
-                consumer.commitAsync((m,e) -> {
-                    if (Objects.nonNull(e)) {
-                        log.warn("Failure to commit message:\n " + m, e);
+                    currentOffsets.put(new TopicPartition(record.topic(), record.partition()),
+                                       new OffsetAndMetadata(record.offset() + 1, "no meta"));
+                    count++;
+                    if (count % 100 == 0) {
+                        consumer.commitAsync(currentOffsets, (m, e) -> {
+                            if (Objects.nonNull(e)) {
+                                log.warn("Failure to commit message:\n " + m, e);
+                            }
+                        });
                     }
-                });
+                }
             }
 
         } catch (WakeupException exception) {
