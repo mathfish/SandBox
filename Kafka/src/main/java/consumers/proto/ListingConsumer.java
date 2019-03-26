@@ -17,12 +17,14 @@ public final class ListingConsumer implements Runnable{
     private final Consumer<ListingKey, ListingValue> consumer;
     private final Map<TopicPartition, OffsetAndMetadata> currentOffsets;
     private int count = 0;
+    private final int id;
 
     public ListingConsumer(Integer clientId) {
         Properties consumerProperties = getConsumerProperties(clientId);
         consumer = new KafkaConsumer<>(consumerProperties);
-        consumer.subscribe(Collections.singleton("Airbnb_Listings"));
+        consumer.subscribe(Collections.singleton("Airbnb_Listings"), new HandleListingConsumersReblance());
         currentOffsets = new HashMap<>();
+        id = clientId;
     }
 
     private Properties getConsumerProperties(Integer id) {
@@ -57,6 +59,11 @@ public final class ListingConsumer implements Runnable{
             }
 
         } catch (WakeupException exception) {
+            log.info("Wakeup invoked on consumer" + this.id);
+        } catch (Exception exception) {
+            log.error("Unexpected Error Occurred", exception);
+        }
+        finally {
             try {
                 consumer.commitSync();
             } finally {
@@ -79,5 +86,20 @@ public final class ListingConsumer implements Runnable{
                 ", Num Reviews: " + record.value().getNumberReviews() +
                 ", Rating: " + record.value().getRating();
         return msg;
+    }
+
+
+    private class HandleListingConsumersReblance implements ConsumerRebalanceListener {
+
+        @Override
+        public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+            //no op
+        }
+
+        @Override
+        public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+            log.info("Partitions After Rebalance:" +  partitions.toString());
+            consumer.commitSync(currentOffsets);
+        }
     }
 }
