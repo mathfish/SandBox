@@ -59,7 +59,7 @@ public class ListingProducerDriver {
                 String propertyType = record.get("property_type");
                 int accommodates = Integer.parseInt(record.get("accommodates"));
                 String price = record.get("price");
-                String cleaningFee = record.get("cleaning_fee").isEmpty() ? "0" : record.get("cleaning_fee");
+                String cleaningFee = record.get("cleaning_fee").isEmpty() ? "$0.00" : record.get("cleaning_fee");
                 NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(Locale.US);
                 float cleaningFeeVal = currencyInstance.parse(cleaningFee).floatValue();
                 String extraPeople = record.get("extra_people");

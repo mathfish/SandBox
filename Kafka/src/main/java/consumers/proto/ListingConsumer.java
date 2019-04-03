@@ -31,10 +31,11 @@ public final class ListingConsumer implements Runnable{
         Properties consumerProps = new Properties();
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("bootstrap.servers","localhost:9092" );
-        consumerProps.put("group.id", "ListingConsumers");
-        consumerProps.put("client.id", id);
-        consumerProps.put("key.deserializer", "consumers.deserializers.ListingKeyDeserializer");
-        consumerProps.put("value.deserializer", "consumers.deserializers.ListingValueDeserializer");
+        consumerProps.put("group.id", "ListingProtoConsumers");
+        consumerProps.put("client.id", String.valueOf(id));
+        consumerProps.put("auto.offset.reset","earliest");
+        consumerProps.put("key.deserializer", "consumers.proto.deserializers.ListingKeyDeserializer");
+        consumerProps.put("value.deserializer", "consumers.proto.deserializers.ListingValueDeserializer");
         return consumerProps;
     }
 
@@ -47,8 +48,9 @@ public final class ListingConsumer implements Runnable{
         try {
             while (true) {
                 ConsumerRecords<ListingKey, ListingValue> records = consumer.poll(Duration.ofMillis(100));
+                log.info("num records: " + records.count());
                 for (ConsumerRecord<ListingKey, ListingValue> record : records) {
-                    log.info(buildMessage(record));
+                    log.info("record from consumer " + getId() + ": " + buildMessage(record));
                     currentOffsets.put(new TopicPartition(record.topic(), record.partition()),
                                        new OffsetAndMetadata(record.offset() + 1, "no meta"));
                     count++;
