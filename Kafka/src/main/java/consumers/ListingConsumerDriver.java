@@ -27,6 +27,7 @@ public class ListingConsumerDriver {
         Runtime.getRuntime().addShutdownHook(new Thread(
                 () -> {
                     for (ListingConsumer consumer : consumers) {
+                        log.info("Shutting down consumer  " + consumer.getId());
                         consumer.shutdown();
                     }
                     executor.shutdown();

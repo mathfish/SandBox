@@ -38,6 +38,10 @@ public final class ListingConsumer implements Runnable{
         return consumerProps;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public void run() {
         try {
