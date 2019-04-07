@@ -18,4 +18,5 @@ wp-content/wp-cache-config.php
 **/*gradlew*
 **/.gradle
 **/build
+**/zookeeper.out
 **/Kafka/out
