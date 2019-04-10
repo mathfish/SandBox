@@ -20,3 +20,4 @@ wp-content/wp-cache-config.php
 **/build
 **/zookeeper.out
 **/Kafka/out
+**/SpringInActionCode/
