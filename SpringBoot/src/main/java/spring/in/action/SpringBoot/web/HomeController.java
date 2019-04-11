@@ -1,4 +1,4 @@
-package spring.in.action.SpringBoot;
+package spring.in.action.SpringBoot.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
