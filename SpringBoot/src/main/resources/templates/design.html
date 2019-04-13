@@ -58,12 +58,10 @@
 
       <h3>Name your taco creation:</h3>
       <input type="text" th:field="*{name}"/>
-      <!-- end::all[] -->
-<!--      <span th:text="${#fields.hasErrors('name')}">XXX</span>-->
-<!--      <span class="validationError"-->
-<!--            th:if="${#fields.hasErrors('name')}"-->
-<!--            th:errors="*{name}">Name Error</span>-->
-      <!-- tag::all[] -->
+      <span th:text="${#fields.hasErrors('name')}">XXX</span>
+      <span class="validationError"
+            th:if="${#fields.hasErrors('name')}"
+            th:errors="*{name}">Name Error</span>
       <br/>
 
       <button>Submit your taco</button>
