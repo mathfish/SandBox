@@ -7,6 +7,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Data
 public class Order {
@@ -30,4 +31,6 @@ public class Order {
     @NotBlank
     @Digits(integer = 3, fraction = 0, message = "Invalid CVV")
     private String ccCVV;
+    private Long id;
+    private Date placedAt;
 }
