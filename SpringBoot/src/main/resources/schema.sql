@@ -15,9 +15,8 @@ CREATE TABLE IF NOT EXISTS Taco_Ingredients (
     taco BIGINT NOT NULL,
     ingredient VARCHAR(4) NOT NULL,
     FOREIGN KEY (taco) REFERENCES Taco(id),
-    FOREIGN KEY (ingredients) REFERENCES Ingredient(id);
+    FOREIGN KEY (ingredient) REFERENCES Ingredient(id)
 );
-
 
 CREATE TABLE IF NOT EXISTS Taco_Order (
     id IDENTITY,

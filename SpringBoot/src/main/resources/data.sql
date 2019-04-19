@@ -6,7 +6,7 @@ DELETE FROM Ingredient;
 
 INSERT INTO Ingredient (id, name, type )
 VALUES
-    ('FLTO', 'FLOUR Tortilla', 'WRAP'),
+    ('FLTO', 'Flour Tortilla', 'WRAP'),
     ('COTO', 'Corn Tortilla', 'WRAP'),
     ('GRBF', 'Ground Beef', 'PROTEIN'),
     ('CARN', 'Carnitas', 'PROTEIN'),
@@ -15,4 +15,4 @@ VALUES
     ('CHED', 'Cheddar', 'CHEESE'),
     ('JACK', 'Monterrey Jack', 'CHEESE'),
     ('SLSA', 'Salsa', 'SAUCE'),
-    ('SRCR', 'Sour Cream', 'Sauce');
+    ('SRCR', 'Sour Cream', 'SAUCE');
