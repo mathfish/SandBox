@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import spring.in.action.SpringBoot.Ingredient;
+import org.springframework.stereotype.Repository;
 import spring.in.action.SpringBoot.Taco;
 
 import java.sql.Timestamp;
@@ -14,6 +14,7 @@ import java.sql.Types;
 import java.util.Arrays;
 import java.util.Date;
 
+@Repository
 public class JdbcTacoRepository implements TacoRepository {
 
     private final JdbcTemplate jdbc;
