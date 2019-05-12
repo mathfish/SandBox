@@ -14,17 +14,17 @@ import java.util.List;
 @Data
 public class Order {
     @NotBlank(message = "Name is required")
-    private String name;
+    private String deliveryName;
     @NotBlank(message = "Street is required")
-    private String street;
+    private String deliveryStreet;
     @NotBlank(message = "city is required")
-    private String city;
+    private String deliveryCity;
     @NotBlank(message = "State is required")
-    private String state;
+    private String deliveryState;
     @NotBlank(message = "Zip is required")
     @Size(min = 5, max = 5)
     @Digits(integer = 5, fraction = 0, message = "Zip must be 5 digits")
-    private String zip;
+    private String deliveryZip;
     @NotBlank
     @CreditCardNumber(message = "Not a valid credit card number")
     private String ccNumber;
