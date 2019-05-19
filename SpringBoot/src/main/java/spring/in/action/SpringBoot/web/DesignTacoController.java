@@ -22,7 +22,7 @@ import static spring.in.action.SpringBoot.Ingredient.Type;
 @Slf4j
 @Controller
 @RequestMapping("/design")
-@SessionAttributes("order")
+@SessionAttributes({"order", "design"})
 public class DesignTacoController {
 
     private final IngredientRepository ingredientRepo;
@@ -37,7 +37,12 @@ public class DesignTacoController {
 
     @GetMapping
     public String showDesignForm(Model model) {
+        addIngredientListToModel(model);
 
+        return "design";
+    }
+
+    private void addIngredientListToModel(Model model) {
         List<Ingredient> ingredients = new ArrayList<>();
         ingredientRepo.findAll()
                       .forEach(ingredients::add);
@@ -46,8 +51,6 @@ public class DesignTacoController {
         for (Type type : types) {
             model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
         }
-
-        return "design";
     }
 
     private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
@@ -67,13 +70,15 @@ public class DesignTacoController {
     }
 
     @PostMapping
-    public String processDesign(@Valid Taco design, Errors errors, @ModelAttribute Order order) {
+    public String processDesign(@Valid @ModelAttribute(name = "design") Taco design, Errors errors, @ModelAttribute Order order, Model model) {
         if (errors.hasErrors()) {
+            addIngredientListToModel(model);
             return "design";
         }
 
         Taco saved = designRepo.save(design);
         order.addDesign(saved);
+        model.addAttribute("design", new Taco());
 
         return "redirect:/orders/current";
     }
