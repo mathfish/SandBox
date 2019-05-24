@@ -13,6 +13,7 @@ import java.util.List;
 
 @Data
 public class Order {
+    private String username;
     @NotBlank(message = "Name is required")
     private String deliveryName;
     @NotBlank(message = "Street is required")

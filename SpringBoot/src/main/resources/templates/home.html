@@ -8,5 +8,8 @@
     <h1>Welcome to ...</h1>
     <img th:src="@{/images/TacoCloud.png}"/>
     <a th:href="@{/design}" id="another">Design Taco</a>
+    <form method="post" th:action="@{/logout}">
+        <button>Logout</button>
+    </form>
 </body>
 </html>
