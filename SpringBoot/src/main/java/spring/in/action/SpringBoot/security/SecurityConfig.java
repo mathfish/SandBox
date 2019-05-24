@@ -31,16 +31,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/design", "/orders")
-                .hasRole("USER")
-                .antMatchers("/","/**")
-                .permitAll()
+                    .antMatchers("/design", "/orders")
+                    .hasRole("USER")
+                    .antMatchers("/","/**")
+                    .permitAll()
                 .and()
-                .formLogin()
-                .loginPage("/login")
+                    .formLogin()
+                    .loginPage("/login")
                 .and()
-                .logout()
-                .logoutSuccessUrl("/")
-        .and().headers().frameOptions().disable().and().csrf().disable();
+                    .logout()
+                    .logoutSuccessUrl("/")
+                .and()
+                    .headers()
+                    .frameOptions()
+                    .disable()
+                .and()
+                    .csrf()
+                    .ignoringAntMatchers("/h2-console/**");
     }
 }
