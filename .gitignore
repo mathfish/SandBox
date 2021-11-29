@@ -21,3 +21,4 @@ wp-content/wp-cache-config.php
 **/zookeeper.out
 **/Kafka/out
 **/SpringInActionCode/
+.ipynb_checkpoints
