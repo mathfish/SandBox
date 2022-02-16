@@ -22,3 +22,7 @@ wp-content/wp-cache-config.php
 **/Kafka/out
 **/SpringInActionCode/
 .ipynb_checkpoints
+PythonProjs/Timeseries/data
+PythonProjs/Timeseries/sql
+PythonProjs/Timeseries/postgres-data
+
